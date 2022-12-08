@@ -1,6 +1,6 @@
 <template>
     <div class="w-96 mx-auto">
-            Personal
+        Personal
     </div>
 </template>
 

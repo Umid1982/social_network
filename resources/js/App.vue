@@ -1,8 +1,5 @@
 <template>
     <div>
-        <h1>Hello word</h1>
-    </div>
-    <div>
         <div class="flex justify-between p-8 w-96 mx-auto">
 
             <router-link v-if="!token" :to="{ name: 'user.login'}">Login</router-link>
