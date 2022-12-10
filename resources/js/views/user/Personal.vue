@@ -17,9 +17,9 @@
                 </div>
             </div>
             <div v-if="image">
-                <img :src="image" alt="preview">
+                <img :src="image.url" alt="preview">
             </div>
-            <a href="#" class="ml-auto block p-2 w-32 rounded-3xl bg-green-600 text-white text-center hover:bg-red-600">Publish</a>
+            <a @click.prevent="store" href="#" class="ml-auto block p-2 w-32 rounded-3xl bg-green-600 text-white text-center hover:bg-red-600">Publish</a>
         </div>
     </div>
 </template>
@@ -36,6 +36,13 @@ export default {
         }
     },
     methods: {
+        store(){
+            const id = this.image ? this.image.id : null ;
+          axios.post('/api/posts',{title: this.title, content: this.content, image_id: id})
+              .then(res => {
+                  console.log(res);
+              });
+        },
         selectFile() {
             this.fileInput = this.$refs.file;
             this.fileInput.click();
@@ -44,7 +51,7 @@ export default {
             let file = e.target.files[0]
             const formData = new FormData()
             formData.append('image', file)
-            axios.post('/api/post_image', formData, {
+            axios.post('/api/post_images', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
