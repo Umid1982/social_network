@@ -10,4 +10,8 @@ class PostImage extends Model
     use HasFactory;
     protected $table = 'post_images';
     protected $guarded = false;
+
+    public function storeUrlAttribute(){
+        return url('storage/' . $this->path);
+    }
 }
