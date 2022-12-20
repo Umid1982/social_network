@@ -2,11 +2,13 @@
     <div class="w-96 mx-auto">
         <div v-if="users">
             <div class="mb-4 pb-6 border-b border-gray-200" v-for="user in users">
-                <p>{{user.id}}</p>
-                <p>{{user.name}}</p>
-                <p>{{user.email}}</p>
+                <router-link :to="{name: 'user.show',params: {id: user.id}}">
+                    <p>{{ user.id }}</p>
+                    <p>{{ user.name }}</p>
+                    <p>{{ user.email }}</p>
+                </router-link>
             </div>
-       </div>
+        </div>
     </div>
 </template>
 
@@ -24,7 +26,7 @@ export default {
     },
 
     methods: {
-        getUsers(){
+        getUsers() {
             axios.get('/api/users/')
                 .then(res => {
                     this.users = res.data.data

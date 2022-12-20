@@ -10,12 +10,13 @@ use Illuminate\Support\Facades\Storage;
 
 class PostImageController extends Controller
 {
-    public function store (StoreRequest $request){
+    public function store(StoreRequest $request)
+    {
         $path = Storage::disk('public')->put('/images', $request['image']);
-       $image= PostImage::create([
-            'path'=>$path,
-            'user_id'=>auth()->id()
+        $image = PostImage::create([
+            'path' => $path,
+            'user_id' => auth()->id()
         ]);
-        return new PostImageResource($image);
+         return new PostImageResource($image);
     }
 }

@@ -30,19 +30,14 @@
         </div>
         <div v-if="posts" >
             <h1 class="mb-8 pb-8 border-b  border-gray-400">Post</h1>
-            <div v-for="post in posts" class="mb-8 pb-8 border-b  border-gray-400">
-                <h1 class="text-xl">{{ post.title }}</h1>
-                <img class="my-3 mx-auto" v-if="post.image_url" :src="post.image_url" :alt="post.title"/>
-                <p>{{ post.content }}</p>
-                <p class="mt-2 text-right text-sm text-slate-500">{{ post.date }}</p>
-            </div>
+            <Post v-for="post in posts" :post="post"></Post>
         </div>
     </div>
 
 </template>
 
 <script>
-
+import Post from "../../componets/Post.vue";
 export default {
     name: "Personal",
     data() {
@@ -52,6 +47,9 @@ export default {
             image: null,
             posts: [],
         }
+    },
+    components: {
+        Post
     },
     mounted() {
         this.getPosts()
@@ -87,7 +85,7 @@ export default {
                 }
             })
                 .then(res => {
-                    this.image = res.data.data
+                      this.image = res.data.data
                 })
         },
     }
