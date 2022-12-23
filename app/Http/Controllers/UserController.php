@@ -39,9 +39,12 @@ class UserController extends Controller
         $data['is_followed'] = count($res['attached']) > 0;
         return $data;
     }
-    public function followingPost(){
-        $followedIds=auth()->user()->followings()->get()->pluck('id')->toArray();
+
+    public function followingPost()
+    {
+        $followedIds = auth()->user()->followings()->get()->pluck('id')->toArray();
         $posts = Post::whereIn('user_id', $followedIds)->get();
         return PostResource::collection($posts);
     }
+
 }
