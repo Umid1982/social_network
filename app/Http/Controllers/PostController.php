@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Post\CommentRequest;
 use App\Http\Requests\Post\RepostRequest;
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\Post\PostResource;
+use App\Models\Comment;
 use App\Models\LikedPost;
 use App\Models\Post;
 use App\Models\PostImage;
@@ -19,7 +22,7 @@ class PostController extends Controller
     {
         $posts = Post::where('user_id', auth()->id())->latest()->get();
 
-        $likedPostIds =LikedPost::where('user_id', auth()->id())
+        $likedPostIds = LikedPost::where('user_id', auth()->id())
             ->get('post_id')->pluck('post_id')->toArray();
         foreach ($posts as $post) {
             if (in_array($post->id, $likedPostIds)) {
@@ -50,10 +53,12 @@ class PostController extends Controller
         }
         return new PostResource($post);
     }
-    public function repost(RepostRequest $request,Post $post){
+
+    public function repost(RepostRequest $request, Post $post)
+    {
         $data = $request->validated();
-        $data['user_id']=auth()->id();
-        $data['reposted_id']=$post->id;
+        $data['user_id'] = auth()->id();
+        $data['reposted_id'] = $post->id;
         Post::create($data);
     }
 
@@ -73,5 +78,14 @@ class PostController extends Controller
         $data['is_liked'] = count($res['attached']) > 0;
         $data['likes_count'] = $post->likedUsers()->count();
         return $data;
+    }
+
+    public function comment(Post $post,CommentRequest $request)
+    {
+        $data = $request->validated();
+        $data['post_id']=$post->id;
+        $data['user_id']=auth()->id();
+        $comment = Comment::create($data);
+        return new CommentResource($comment);
     }
 }
