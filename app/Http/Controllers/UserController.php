@@ -50,7 +50,7 @@ class UserController extends Controller
         $likedPostIds = LikedPost::where('user_id', auth()->id())
             ->get('post_id')->pluck('post_id')->toArray();
 //        После лайка не отображать посты на странице
-        $posts = Post::whereIn('user_id', $followedIds)
+        $posts = Post::whereIn('user_id', $followedIds)->withCount('repostedByPosts')
             ->whereNotIn('id',$likedPostIds)->get();
 
         return PostResource::collection($posts);

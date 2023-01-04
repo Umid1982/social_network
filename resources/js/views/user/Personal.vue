@@ -1,13 +1,21 @@
 <template>
     <div class="w-96 mx-auto">
         <div>
-            <div>
-                <input v-model="title" class="mb-3 p-2 w-96 rounded-3xl border border-slate-300 " type="text"
-                       placeholder="title">
+            <div class="mb-3">
+               <div>
+                   <input v-model="title" class=" p-2 w-96 rounded-3xl border border-slate-300 " type="text"
+                          placeholder="title">
+                   <div v-if="errors.title">
+                       <p v-for="error in errors.title" class="text-sm mb-2 text-red-500">{{error}}</p>
+                   </div>
+               </div>
             </div>
-            <div>
-                <textarea v-model="content" class="mb-3 p-2 w-96 rounded-3xl border border-slate-300 "
+            <div class="mb-3">
+                <textarea v-model="content" class="p-2 w-96 rounded-3xl border border-slate-300 "
                           placeholder="content"></textarea>
+                <div v-if="errors.content">
+                    <p v-for="error in errors.content" class="text-sm mb-2 text-red-500">{{error}}</p>
+                </div>
             </div>
             <div class="flex">
                 <div>
@@ -28,7 +36,7 @@
             <a @click.prevent="store" href="#"
                class="mb-4  ml-auto block p-2 w-32 rounded-3xl bg-green-600 text-white text-center hover:bg-red-600">Publish</a>
         </div>
-        <div v-if="posts" >
+        <div v-if="posts">
             <h1 class="mb-8 pb-8 border-b  border-gray-400">Post</h1>
             <Post v-for="post in posts" :post="post"></Post>
         </div>
@@ -38,6 +46,7 @@
 
 <script>
 import Post from "../../componets/Post.vue";
+
 export default {
     name: "Personal",
     data() {
@@ -46,6 +55,7 @@ export default {
             content: '',
             image: null,
             posts: [],
+            errors: [],
         }
     },
     components: {
@@ -66,10 +76,13 @@ export default {
             axios.post('/api/posts', {title: this.title, content: this.content, image_id: id})
                 .then(res => {
                     this.title = ''
-                       this.content = ''
-                        this.image = null
+                    this.content = ''
+                    this.image = null
                     this.posts.unshift(res.data.data)
-                });
+                })
+                .catch(e => {
+                    this.errors = e.response.data.errors
+                })
         },
         selectFile() {
             this.fileInput = this.$refs.file;
@@ -85,7 +98,7 @@ export default {
                 }
             })
                 .then(res => {
-                      this.image = res.data.data
+                    this.image = res.data.data
                 })
         },
     }

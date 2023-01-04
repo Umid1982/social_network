@@ -11,16 +11,13 @@ use App\Models\Comment;
 use App\Models\LikedPost;
 use App\Models\Post;
 use App\Models\PostImage;
-use App\Models\SubscriberFollowing;
-use http\Env\Response;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::where('user_id', auth()->id())->latest()->get();
+        $posts = Post::where('user_id', auth()->id())->withCount('repostedByPosts')->latest()->get();
 
         $likedPostIds = LikedPost::where('user_id', auth()->id())
             ->get('post_id')->pluck('post_id')->toArray();
@@ -87,5 +84,11 @@ class PostController extends Controller
         $data['user_id']=auth()->id();
         $comment = Comment::create($data);
         return new CommentResource($comment);
+    }
+
+
+    public function commentList(Post $post){
+        $comments = $post->comments()->latest()->get();
+        return CommentResource::collection($comments);
     }
 }

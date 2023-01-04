@@ -14,16 +14,17 @@ class PostResource extends JsonResource
      */
     public function toArray($request)
     {
-        $url=isset($this->image) ? $this->image->url : null;
         return [
-            'id'=>$this->id,
+            'id' => $this->id,
             'title' => $this->title,
             'content' => $this->content,
-            'image_url' => $url,
-            'date'=> $this->date,
-            'is_liked'=> $this->is_liked ?? false,
-            'likes_count'=> $this->likedUsers->count(),
-            'reposted_post'=>new RepostedPostResource($this->repostedPost),
+            'image_url' => $this->image?->url,
+            'date' => $this->date,
+            'is_liked' => $this->is_liked ?? false,
+            'likes_count' => $this->likedUsers->count(),
+            'reposted_post' => new RepostedPostResource($this->repostedPost),
+            'comments_count' => $this->comments_count,
+            'reposted_by_posts_count'=>$this->reposted_by_posts_count,
         ];
     }
 }
