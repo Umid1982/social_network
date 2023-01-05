@@ -1,4 +1,5 @@
 <template>
+    <Stat :stats="stats"></Stat>
     <div class="w-96 mx-auto">
         <div>
             <div class="mb-3">
@@ -46,6 +47,7 @@
 
 <script>
 import Post from "../../componets/Post.vue";
+import Stat from "../../componets/Stat.vue";
 
 export default {
     name: "Personal",
@@ -56,15 +58,25 @@ export default {
             image: null,
             posts: [],
             errors: [],
+            stats: [],
         }
     },
     components: {
-        Post
+        Post,
+        Stat
     },
     mounted() {
         this.getPosts()
+        this.getStats()
     },
     methods: {
+
+        getStats(){
+            axios.post('/api/users/stats',{id: null})
+                .then(res => {
+                    this.stats = res.data.data
+                })
+        },
         getPosts() {
             axios.get('/api/posts')
                 .then(res => {

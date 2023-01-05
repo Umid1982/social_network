@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Post\StoreRequest;
+use App\Http\Requests\User\StatRequest;
 use App\Http\Resources\Post\PostResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\LikedPost;
@@ -12,6 +13,7 @@ use App\Models\SubscriberFollowing;
 use App\Models\User;
 use http\Env\Response;
 use Illuminate\Http\Request;
+use Illuminate\Session\Store;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -51,7 +53,7 @@ class UserController extends Controller
             ->get('post_id')->pluck('post_id')->toArray();
 //        После лайка не отображать посты на странице
         $posts = Post::whereIn('user_id', $followedIds)->withCount('repostedByPosts')
-            ->whereNotIn('id',$likedPostIds)->get();
+            ->whereNotIn('id', $likedPostIds)->get();
 
         return PostResource::collection($posts);
     }
@@ -66,6 +68,21 @@ class UserController extends Controller
             }
         }
         return $posts;
+    }
+
+    public function stat(StatRequest $request)
+    {
+        $data = $request->validated();
+        $userId = isset($data['user_id']) ? $data['user_id'] : auth()->id();
+        $result = [];
+        $result['subscribers_count'] = SubscriberFollowing::where('followings_id', $userId)->count();
+        $result['followings_count'] = SubscriberFollowing::where('subscriber_id', $userId)->count();
+        $result['likes_count'] = LikedPost::where('user_id', $userId)->count();
+
+        $postIds = Post::where('user_id', $userId)->get('id')->pluck('id')->toArray();
+        $result['likes_count'] = LikedPost::whereIn('post_id', $postIds)->count();
+        $result['posts_count'] = count($postIds);
+        return \response()->json(['data' => $result]);
     }
 
 }
